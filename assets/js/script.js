@@ -3,13 +3,14 @@
 let taskList = JSON.parse(localStorage.getItem("tasks")) || [];
 let nextId = JSON.parse(localStorage.getItem("nextId")) || 1;
 
-// Todo: create a function to generate a unique task id
-function generateTaskId() {
-  const taskId = nextId;
-  nextId++;
-  saveTasks(); // Update nextId in localStorage
-  return taskId;
+// Save tasks to localStorage
+function saveTasks() {
+  localStorage.setItem("tasks", JSON.stringify(taskList));
+  localStorage.setItem("nextId", JSON.stringify(nextId));
 }
+
+// Todo: create a function to generate a unique task id
+function generateTaskId() {}
 
 // Todo: create a function to create a task card
 // made code to create card with header body text and deadline
@@ -29,7 +30,7 @@ function createTaskCard(task) {
   $("#todo-cards").append(taskElement);
 }
 
-// Todo: create a function to render the task list and make cards draggable
+//Todo: create a function to render the task list and make cards draggable
 function renderTaskList() {
   $(".task-list").empty();
 
@@ -37,20 +38,8 @@ function renderTaskList() {
     const taskCard = createTaskCard(task);
     $(`#${task.state}-cards`).append(taskCard);
   });
-
-  // Make tasks draggable
-  $(".task").draggable({
-    revert: "invalid",
-    start: function (event, ui) {
-      $(this).css("opacity", "0.5");
-    },
-    stop: function (event, ui) {
-      $(this).css("opacity", "1");
-    },
-  });
-  // Add delete button event listeners
-  $(".delete-task").click(handleDeleteTask);
 }
+
 // Todo: create a function to handle adding a new task
 function handleAddTask(event) {
   event.preventDefault();
@@ -71,7 +60,18 @@ function handleAddTask(event) {
 }
 
 // Todo: create a function to handle deleting a task
-function handleDeleteTask(event) {}
+function handleDeleteTask(event) {
+  // Identify the task to be deleted based on the event or event target
+  const taskId = event.target.id; // Assuming the id of the task is stored in the id attribute of the element
+
+  // Remove the task from the list of tasks
+  const updatedTasks = tasks.filter((task) => task.id !== taskId);
+
+  // Update the state with the new list of tasks
+  setTasks(updatedTasks);
+  // Add delete button event listeners
+  $(".delete-task").click(handleDeleteTask);
+}
 
 // Todo: create a function to handle dropping a task into a new status lane
 function handleDrop(event, ui) {}
