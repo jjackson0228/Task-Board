@@ -10,7 +10,12 @@ function saveTasks() {
 }
 
 // Todo: create a function to generate a unique task id
-function generateTaskId() {}
+function generateTaskId() {
+  const taskId = nextId;
+  nextId++;
+  localStorage.setItem("nextId", JSON.stringify(nextId)); // Save the updated nextId to localStorage
+  return taskId;
+}
 
 // Todo: create a function to create a task card
 // made code to create card with header body text and deadline
@@ -28,6 +33,8 @@ function createTaskCard(task) {
 
   // Append the created task card to the "To Do" column
   $("#todo-cards").append(taskElement);
+  // connect the delet task button to the handle delete task function
+  taskElement.find(".delete-task").on("click", handleDeleteTask);
 }
 
 //Todo: create a function to render the task list and make cards draggable
@@ -60,17 +67,19 @@ function handleAddTask(event) {
 }
 
 // Todo: create a function to handle deleting a task
+// created handleDeleteTask function
 function handleDeleteTask(event) {
-  // Identify the task to be deleted based on the event or event target
-  const taskId = event.target.id; // Assuming the id of the task is stored in the id attribute of the element
+  const taskElement = $(event.target).closest(".task");
+  const taskId = taskElement.attr("id").split("-")[1];
 
-  // Remove the task from the list of tasks
-  const updatedTasks = tasks.filter((task) => task.id !== taskId);
+  // Remove the task from the task list
+  taskList = taskList.filter((task) => task.id !== parseInt(taskId));
 
-  // Update the state with the new list of tasks
-  setTasks(updatedTasks);
-  // Add delete button event listeners
-  $(".delete-task").click(handleDeleteTask);
+  // Save the updated task list to localStorage
+  saveTasks();
+
+  // Remove the task element from the DOM
+  taskElement.remove();
 }
 
 // Todo: create a function to handle dropping a task into a new status lane
