@@ -1,7 +1,7 @@
 // Retrieve tasks and nextId from localStorage
 // added default values to tasks and nextId
 let taskList = JSON.parse(localStorage.getItem("tasks")) || [];
-let nextId = JSON.parse(localStorage.getItem("nextId")) || 1;
+let nextId = JSON.parse(localStorage.getItem("nextId")) || 0;
 
 // Save tasks to localStorage
 function saveTasks() {
@@ -37,6 +37,8 @@ function createTaskCard(task) {
   taskElement.find(".delete-task").on("click", function () {
     $(this).closest(".task").remove(); // Remove the task card when delete button is clicked
   });
+  //  added return task element function
+  return taskElement;
 }
 
 // Todo: create a function to render the task list and make cards draggable
@@ -72,6 +74,11 @@ function handleAddTask(event) {
     deadline: $("#taskDeadline").val(),
     state: "todo",
   };
+  // Save the new task to Local Storage
+  localStorage.setItem(`task-${newTask.id}`, JSON.stringify(newTask));
+
+  // Call createTaskCard to dynamically create a task card
+  createTaskCard(newTask);
 
   taskList.push(newTask);
   saveTasks();
@@ -81,7 +88,13 @@ function handleAddTask(event) {
 }
 
 // Todo: create a function to handle deleting a task
-function handleDeleteTask(event) {}
+function handleDeleteTask(event) {
+  // Save task to Local Storage
+  localStorage.setItem(`task-${task.id}`, JSON.stringify(task));
+
+  // Call createTaskCard to dynamically create a task card
+  createTaskCard(task);
+}
 
 // Todo: create a function to handle dropping a task into a new status lane
 function handleDrop(event, ui) {}
