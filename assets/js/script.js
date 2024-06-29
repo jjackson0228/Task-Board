@@ -1,7 +1,7 @@
 // Retrieve tasks and nextId from localStorage
 // added default values to tasks and nextId
-let taskList = JSON.parse(localStorage.getItem("tasks")) || [];
-let nextId = JSON.parse(localStorage.getItem("nextId")) || 0;
+let taskList = JSON.parse(localStorage.getItem("tasks"));
+let nextId = JSON.parse(localStorage.getItem("nextId"));
 
 // Save tasks to localStorage
 function saveTasks() {
@@ -46,8 +46,9 @@ function renderTaskList() {
   $(".task-list").empty();
 
   taskList.forEach((task) => {
-    const taskCard = createTaskCard(task);
-    $(`#${task.state}-cards`).append(taskCard);
+    const taskCard = createTaskCard(task); //commented these two lines out trying to debug
+    $(`#${task.state}-cards`).append(taskCard); //commented this line out trying to debug
+    // createTaskCard(task);   //commented out for debugingn
   });
 
   // Make tasks draggable
@@ -61,7 +62,7 @@ function renderTaskList() {
     },
   });
   // Add delete button event listeners
-  $(".delete-task").click(handleDeleteTask);
+  // $(".delete-task").click(handleDeleteTask);   //added this abouve so commented out to debug
 }
 // Todo: create a function to handle adding a new task
 function handleAddTask(event) {
@@ -75,10 +76,10 @@ function handleAddTask(event) {
     state: "todo",
   };
   // Save the new task to Local Storage
-  localStorage.setItem(`task-${newTask.id}`, JSON.stringify(newTask));
+  // localStorage.setItem(`task-${newTask.id}`, JSON.stringify(newTask));  //commented out to debug
 
   // Call createTaskCard to dynamically create a task card
-  createTaskCard(newTask);
+  // createTaskCard(newTask);  //commented out for debugging
 
   taskList.push(newTask);
   saveTasks();
@@ -90,10 +91,12 @@ function handleAddTask(event) {
 // Todo: create a function to handle deleting a task
 function handleDeleteTask(event) {
   // Save task to Local Storage
-  localStorage.setItem(`task-${task.id}`, JSON.stringify(task));
-
+  localStorage.setItem(`task-${task.id}`, JSON.stringify(task)); //commented out for debugging
+  taskList = taskList.filter((task) => task.id !== taskId);
+  saveTasks();
+  renderTaskList();
   // Call createTaskCard to dynamically create a task card
-  createTaskCard(task);
+  // createTaskCard (task); //commented out for debugging
 }
 
 // Todo: create a function to handle dropping a task into a new status lane
@@ -103,7 +106,10 @@ function handleDrop(event, ui) {}
 $(document).ready(function () {
   $("#taskForm").submit(function (event) {
     event.preventDefault(); // Prevent the form from submitting normally
+    renderTaskList();
+    saveTasks();
 
+    $("#taskForm").submit(handleAddTask);
     // Capture form data
     const taskTitle = $("#taskTitle").val();
     const taskDescription = $("#taskDescription").val();
