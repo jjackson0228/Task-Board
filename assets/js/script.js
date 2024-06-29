@@ -13,7 +13,7 @@ function saveTasks() {
 function generateTaskId() {
   const taskId = nextId;
   nextId++;
-  localStorage.setItem("nextId", JSON.stringify(nextId)); // Save the updated nextId to localStorage
+  saveTasks(); // Update nextId in localStorage
   return taskId;
 }
 
@@ -33,11 +33,13 @@ function createTaskCard(task) {
 
   // Append the created task card to the "To Do" column
   $("#todo-cards").append(taskElement);
-  // connect the delet task button to the handle delete task function
-  taskElement.find(".delete-task").on("click", handleDeleteTask);
+  // Add event listener to the delete button
+  taskElement.find(".delete-task").on("click", function () {
+    $(this).closest(".task").remove(); // Remove the task card when delete button is clicked
+  });
 }
 
-//Todo: create a function to render the task list and make cards draggable
+// Todo: create a function to render the task list and make cards draggable
 function renderTaskList() {
   $(".task-list").empty();
 
@@ -45,8 +47,20 @@ function renderTaskList() {
     const taskCard = createTaskCard(task);
     $(`#${task.state}-cards`).append(taskCard);
   });
-}
 
+  // Make tasks draggable
+  $(".task").draggable({
+    revert: "invalid",
+    start: function (event, ui) {
+      $(this).css("opacity", "0.5");
+    },
+    stop: function (event, ui) {
+      $(this).css("opacity", "1");
+    },
+  });
+  // Add delete button event listeners
+  $(".delete-task").click(handleDeleteTask);
+}
 // Todo: create a function to handle adding a new task
 function handleAddTask(event) {
   event.preventDefault();
@@ -67,20 +81,7 @@ function handleAddTask(event) {
 }
 
 // Todo: create a function to handle deleting a task
-// created handleDeleteTask function
-function handleDeleteTask(event) {
-  const taskElement = $(event.target).closest(".task");
-  const taskId = taskElement.attr("id").split("-")[1];
-
-  // Remove the task from the task list
-  taskList = taskList.filter((task) => task.id !== parseInt(taskId));
-
-  // Save the updated task list to localStorage
-  saveTasks();
-
-  // Remove the task element from the DOM
-  taskElement.remove();
-}
+function handleDeleteTask(event) {}
 
 // Todo: create a function to handle dropping a task into a new status lane
 function handleDrop(event, ui) {}
